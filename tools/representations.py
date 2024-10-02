@@ -24,6 +24,7 @@ from tools.constants import (
     COUNTRY_CODE,
     SUBDIVISION_NAME,
     MUNICIPALITY,
+    FILESIZE_BYTES,
     BOUNDING_BOX,
     MINIMUM_LATITUDE,
     MAXIMUM_LATITUDE,
@@ -422,6 +423,7 @@ class Source(ABC):
         self.authentication_info_url = urls.pop(AUTHENTICATION_INFO, None)
         self.api_key_parameter_name = urls.pop(API_KEY_PARAMETER_NAME, None)
         self.license_url = urls.pop(LICENSE, None)
+        self.filesize_bytes = urls.pop(FILESIZE_BYTES, None)
 
     @abstractmethod
     def __str__(self):
@@ -530,6 +532,7 @@ class GtfsScheduleSource(Source):
         self.bbox_max_lon = bounding_box.pop(MAXIMUM_LONGITUDE)
         self.bbox_extracted_on = bounding_box.pop(EXTRACTED_ON)
         urls = kwargs.pop(URLS, {})
+        self.filesize_bytes = kwargs.pop(FILESIZE_BYTES, None)
         self.latest_url = urls.pop(LATEST)
         self.feed_contact_email = kwargs.pop(FEED_CONTACT_EMAIL, None)
         self.redirects = kwargs.pop(REDIRECTS, [])
@@ -543,6 +546,7 @@ class GtfsScheduleSource(Source):
             COUNTRY_CODE: self.country_code,
             SUBDIVISION_NAME: self.subdivision_name,
             MUNICIPALITY: self.municipality,
+            FILESIZE_BYTES: self.filesize_bytes,
             MINIMUM_LATITUDE: self.bbox_min_lat,
             MAXIMUM_LATITUDE: self.bbox_max_lat,
             MINIMUM_LONGITUDE: self.bbox_min_lon,
@@ -690,8 +694,14 @@ class GtfsScheduleSource(Source):
             ) = extract_gtfs_bounding_box(file_path=dataset_path)
             extracted_on = get_iso_time()
 
+            #filesize_bytes = filesize(dataset_path)
+            filesize_bytes = os.stat(dataset_path).st_size
+
+
+
             # Delete the downloaded dataset because we don't need it anymore
             os.remove(dataset_path)
+
 
             subdivision_name = kwargs.get(SUBDIVISION_NAME)
             subdivision_name = (
@@ -718,6 +728,7 @@ class GtfsScheduleSource(Source):
                 maximum_latitude=maximum_latitude,
                 minimum_longitude=minimum_longitude,
                 maximum_longitude=maximum_longitude,
+                filesize_bytes=filesize_bytes,
                 extracted_on=extracted_on,
                 latest=latest,
                 **kwargs,
@@ -747,6 +758,7 @@ class GtfsScheduleSource(Source):
                     EXTRACTED_ON: kwargs.pop(EXTRACTED_ON),
                 },
             },
+            FILESIZE_BYTES: kwargs.pop(FILESIZE_BYTES),
             URLS: {
                 DIRECT_DOWNLOAD: kwargs.pop(DIRECT_DOWNLOAD),
                 AUTHENTICATION_TYPE: kwargs.pop(AUTHENTICATION_TYPE, None),
