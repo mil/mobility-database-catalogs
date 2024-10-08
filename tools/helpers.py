@@ -405,3 +405,9 @@ def extract_gtfs_bounding_box(file_path):
     maximum_longitude = stops[STOP_LON].dropna().max() if stops_are_present else None
 
     return minimum_latitude, maximum_latitude, minimum_longitude, maximum_longitude
+
+def extract_gtfs_calendar(file_path):
+    dataset = load_gtfs(file_path)
+    min_date = pd.concat([dataset.calendar.start_date, dataset.calendar_dates.date]).min()
+    max_date  = pd.concat([dataset.calendar.end_date, dataset.calendar_dates.date]).max()
+    return min_date, max_date
