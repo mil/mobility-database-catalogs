@@ -25,6 +25,8 @@ from tools.constants import (
     SUBDIVISION_NAME,
     MUNICIPALITY,
     FILESIZE_BYTES,
+    CALENDAR_MIN,
+    CALENDAR_MAX,
     BOUNDING_BOX,
     MINIMUM_LATITUDE,
     MAXIMUM_LATITUDE,
@@ -424,6 +426,8 @@ class Source(ABC):
         self.api_key_parameter_name = urls.pop(API_KEY_PARAMETER_NAME, None)
         self.license_url = urls.pop(LICENSE, None)
         self.filesize_bytes = urls.pop(FILESIZE_BYTES, None)
+        self.calendar_min = urls.pop(CALENDAR_MIN, None)
+        self.calendar_max = urls.pop(CALENDAR_MAX, None)
 
     @abstractmethod
     def __str__(self):
@@ -533,6 +537,8 @@ class GtfsScheduleSource(Source):
         self.bbox_extracted_on = bounding_box.pop(EXTRACTED_ON)
         urls = kwargs.pop(URLS, {})
         self.filesize_bytes = kwargs.pop(FILESIZE_BYTES, None)
+        self.calendar_min = kwargs.pop(CALENDAR_MIN, None)
+        self.calendar_max = kwargs.pop(CALENDAR_MAX, None)
         self.latest_url = urls.pop(LATEST)
         self.feed_contact_email = kwargs.pop(FEED_CONTACT_EMAIL, None)
         self.redirects = kwargs.pop(REDIRECTS, [])
@@ -547,6 +553,8 @@ class GtfsScheduleSource(Source):
             SUBDIVISION_NAME: self.subdivision_name,
             MUNICIPALITY: self.municipality,
             FILESIZE_BYTES: self.filesize_bytes,
+            CALENDAR_MIN: self.calendar_min,
+            CALENDAR_MAX: self.calendar_max,
             MINIMUM_LATITUDE: self.bbox_min_lat,
             MAXIMUM_LATITUDE: self.bbox_max_lat,
             MINIMUM_LONGITUDE: self.bbox_min_lon,
@@ -697,6 +705,8 @@ class GtfsScheduleSource(Source):
             #filesize_bytes = filesize(dataset_path)
             filesize_bytes = os.stat(dataset_path).st_size
 
+            calendar_min = "FOO"
+            calendar_max = "BAR"
 
 
             # Delete the downloaded dataset because we don't need it anymore
@@ -729,6 +739,8 @@ class GtfsScheduleSource(Source):
                 minimum_longitude=minimum_longitude,
                 maximum_longitude=maximum_longitude,
                 filesize_bytes=filesize_bytes,
+                calendar_min=calendar_min,
+                calendar_max=calendar_max,
                 extracted_on=extracted_on,
                 latest=latest,
                 **kwargs,
@@ -759,6 +771,8 @@ class GtfsScheduleSource(Source):
                 },
             },
             FILESIZE_BYTES: kwargs.pop(FILESIZE_BYTES),
+            CALENDAR_MIN: kwargs.pop(CALENDAR_MIN),
+            CALENDAR_MAX: kwargs.pop(CALENDAR_MAX),
             URLS: {
                 DIRECT_DOWNLOAD: kwargs.pop(DIRECT_DOWNLOAD),
                 AUTHENTICATION_TYPE: kwargs.pop(AUTHENTICATION_TYPE, None),
