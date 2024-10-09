@@ -638,7 +638,7 @@ class GtfsScheduleSource(Source):
                     self.bbox_max_lon,
                 ) = extract_gtfs_bounding_box(file_path=dataset_path)
                 self.bbox_extracted_on = get_iso_time()
-                self.bbox_extracted_filesize = os.stat(dataset_path).st_size
+                self.bbox_extracted_filesize = get_filesize(dataset_path)
                 self.bbox_extracted_calendar_start, self.bbox_extracted_calendar_end = extract_gtfs_calendar(dataset_path)
 
             # Delete the downloaded dataset because we don't need it anymore
@@ -739,9 +739,9 @@ class GtfsScheduleSource(Source):
                 minimum_longitude=minimum_longitude,
                 maximum_longitude=maximum_longitude,
                 extracted_on=extracted_on,
-                extracted_filesize=extracted_filesize,
                 extracted_calendar_start=extracted_calendar_start,
                 extracted_calendar_end=extracted_calendar_end,
+                extracted_filesize=extracted_filesize,
                 latest=latest,
                 **kwargs,
             )

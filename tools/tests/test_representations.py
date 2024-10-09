@@ -463,8 +463,8 @@ class TestGtfsScheduleSource(TestCase):
     @patch("tools.representations.os")
     @patch("tools.representations.get_iso_time")
     @patch("tools.representations.get_filesize")
-    @patch("tools.representations.extract_gtfs_bounding_box")
     @patch("tools.representations.extract_gtfs_calendar")
+    @patch("tools.representations.extract_gtfs_bounding_box")
     @patch("tools.representations.is_readable")
     @patch("tools.representations.download_dataset")
     def test_update(
@@ -472,9 +472,9 @@ class TestGtfsScheduleSource(TestCase):
         mock_download_dataset,
         mock_read_func,
         mock_bounding_box,
-        mock_time,
-        mock_filesize,
         mock_calendar,
+        mock_filesize,
+        mock_time,
         mock_os,
     ):
         instance = GtfsScheduleSource(filename=self.test_filename, **self.test_schema)
@@ -575,8 +575,8 @@ class TestGtfsScheduleSource(TestCase):
     @patch("tools.representations.create_filename")
     @patch("tools.representations.get_iso_time")
     @patch("tools.representations.get_filesize")
-    @patch("tools.representations.extract_gtfs_bounding_box")
     @patch("tools.representations.extract_gtfs_calendar")
+    @patch("tools.representations.extract_gtfs_bounding_box")
     @patch("tools.representations.is_readable")
     @patch("tools.representations.download_dataset")
     def test_build(
@@ -584,9 +584,9 @@ class TestGtfsScheduleSource(TestCase):
         mock_download_dataset,
         mock_read_func,
         mock_bounding_box,
-        mock_time,
-        mock_filesize,
         mock_calendar,
+        mock_filesize,
+        mock_time,
         mock_filename,
         mock_latest_url,
         mock_schema,
