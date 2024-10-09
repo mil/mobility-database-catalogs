@@ -474,8 +474,7 @@ class TestGtfsScheduleSource(TestCase):
         mock_bounding_box,
         mock_time,
         mock_filesize,
-        mock_calendar_start,
-        mock_calendar_end,
+        mock_calendar,
         mock_os,
     ):
         instance = GtfsScheduleSource(filename=self.test_filename, **self.test_schema)
@@ -530,8 +529,10 @@ class TestGtfsScheduleSource(TestCase):
         )
         mock_time.return_value = test_extracted_on
         mock_filesize.return_value = test_extracted_filesize
-        mock_calendar_start.return_value = test_extracted_calendar_start
-        mock_calendar_end.return_value = test_extracted_calendar_end
+        mock_calendar.return_value = (
+            test_extracted_calendar_start,
+            test_extracted_calendar_end
+        )
         under_test = instance.update(
             **{
                 PROVIDER: test_provider,
@@ -585,8 +586,7 @@ class TestGtfsScheduleSource(TestCase):
         mock_bounding_box,
         mock_time,
         mock_filesize,
-        mock_calendar_start,
-        mock_calendar_end,
+        mock_calendar,
         mock_filename,
         mock_latest_url,
         mock_schema,
@@ -606,8 +606,10 @@ class TestGtfsScheduleSource(TestCase):
         )
         mock_time.return_value = "some_time"
         mock_filesize.return_value = "some_filesize"
-        mock_calendar_start.return_value = "some_calendar_start"
-        mock_calendar_end.return_value = "some_calendar_end"
+        mock_calendar.return_value = (
+            "some_calendar_start",
+            "some_calendar_end",
+        )
         mock_filename.return_value = "some_filename"
         mock_latest_url.return_value = "some_latest_url"
         mock_schema.return_value = deepcopy(self.test_schema)
@@ -617,6 +619,9 @@ class TestGtfsScheduleSource(TestCase):
         del self.test_kwargs[MINIMUM_LONGITUDE]
         del self.test_kwargs[MAXIMUM_LONGITUDE]
         del self.test_kwargs[EXTRACTED_ON]
+        del self.test_kwargs[EXTRACTED_FILESIZE]
+        del self.test_kwargs[EXTRACTED_CALENDAR_START]
+        del self.test_kwargs[EXTRACTED_CALENDAR_END]
         del self.test_kwargs[LATEST]
         under_test = GtfsScheduleSource.build(**self.test_kwargs)
         self.assertIsNotNone(under_test)
