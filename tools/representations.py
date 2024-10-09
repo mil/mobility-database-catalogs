@@ -25,15 +25,15 @@ from tools.constants import (
     COUNTRY_CODE,
     SUBDIVISION_NAME,
     MUNICIPALITY,
-    FILESIZE_BYTES,
-    CALENDAR_MIN,
-    CALENDAR_MAX,
     BOUNDING_BOX,
     MINIMUM_LATITUDE,
     MAXIMUM_LATITUDE,
     MINIMUM_LONGITUDE,
     MAXIMUM_LONGITUDE,
     EXTRACTED_ON,
+    EXTRACTED_FILESIZE,
+    EXTRACTED_CALENDAR_START,
+    EXTRACTED_CALENDAR_END,
     URLS,
     DIRECT_DOWNLOAD,
     LICENSE,
@@ -426,9 +426,6 @@ class Source(ABC):
         self.authentication_info_url = urls.pop(AUTHENTICATION_INFO, None)
         self.api_key_parameter_name = urls.pop(API_KEY_PARAMETER_NAME, None)
         self.license_url = urls.pop(LICENSE, None)
-        self.filesize_bytes = urls.pop(FILESIZE_BYTES, None)
-        self.calendar_min = urls.pop(CALENDAR_MIN, None)
-        self.calendar_max = urls.pop(CALENDAR_MAX, None)
 
     @abstractmethod
     def __str__(self):
@@ -499,7 +496,10 @@ class GtfsScheduleSource(Source):
         bbox_max_lat (float): Maximum latitude of the bounding box.
         bbox_min_lon (float): Minimum longitude of the bounding box.
         bbox_max_lon (float): Maximum longitude of the bounding box.
-        bbox_extracted_on (str): Date when the bounding box was extracted.
+        bbox_extracted_on (str): Date-time when the bounding box was extracted.
+        bbox_extracted_filesize (int): Filesize in bytes when the bounding box was extracted.
+        bbox_extracted_calendar_start (str): Date earliest covered by calendar/calendar_dates when the bounding box was extracted.
+        bbox_extracted_calendar_end (str): Date latest covered by calendar/calendar_dates when the bounding box was extracted.
         latest_url (str): URL for the latest version of the GTFS data.
         feed_contact_email (str, optional): Contact email for the GTFS feed.
         redirects (list): List of redirect URLs, if any.
@@ -536,10 +536,10 @@ class GtfsScheduleSource(Source):
         self.bbox_min_lon = bounding_box.pop(MINIMUM_LONGITUDE)
         self.bbox_max_lon = bounding_box.pop(MAXIMUM_LONGITUDE)
         self.bbox_extracted_on = bounding_box.pop(EXTRACTED_ON)
+        self.bbox_extracted_filesize = bounding_box.pop(EXTRACTED_FILESIZE, None)
+        self.bbox_extracted_calendar_start = bounding_box.pop(EXTRACTED_CALENDAR_START, None)
+        self.bbox_extracted_calendar_end = bounding_box.pop(EXTRACTED_CALENDAR_END, None)
         urls = kwargs.pop(URLS, {})
-        self.filesize_bytes = kwargs.pop(FILESIZE_BYTES, None)
-        self.calendar_min = kwargs.pop(CALENDAR_MIN, None)
-        self.calendar_max = kwargs.pop(CALENDAR_MAX, None)
         self.latest_url = urls.pop(LATEST)
         self.feed_contact_email = kwargs.pop(FEED_CONTACT_EMAIL, None)
         self.redirects = kwargs.pop(REDIRECTS, [])
@@ -553,14 +553,14 @@ class GtfsScheduleSource(Source):
             COUNTRY_CODE: self.country_code,
             SUBDIVISION_NAME: self.subdivision_name,
             MUNICIPALITY: self.municipality,
-            FILESIZE_BYTES: self.filesize_bytes,
-            CALENDAR_MIN: self.calendar_min,
-            CALENDAR_MAX: self.calendar_max,
             MINIMUM_LATITUDE: self.bbox_min_lat,
             MAXIMUM_LATITUDE: self.bbox_max_lat,
             MINIMUM_LONGITUDE: self.bbox_min_lon,
             MAXIMUM_LONGITUDE: self.bbox_max_lon,
             EXTRACTED_ON: self.bbox_extracted_on,
+            EXTRACTED_FILESIZE: self.bbox_extracted_filesize,
+            EXTRACTED_CALENDAR_START: self.bbox_extracted_calendar_start,
+            EXTRACTED_CALENDAR_END: self.bbox_extracted_calendar_end,
             DIRECT_DOWNLOAD: self.direct_download_url,
             AUTHENTICATION_TYPE: self.authentication_type,
             AUTHENTICATION_INFO: self.authentication_info_url,
@@ -637,6 +637,9 @@ class GtfsScheduleSource(Source):
                     self.bbox_max_lon,
                 ) = extract_gtfs_bounding_box(file_path=dataset_path)
                 self.bbox_extracted_on = get_iso_time()
+                self.bbox_extracted_filesize = os.stat(dataset_path).st_size
+                self.bbox_extracted_calendar_start, self.bbox_extracted_calendar_end = extract_gtfs_calendar(dataset_path)
+
             # Delete the downloaded dataset because we don't need it anymore
             os.remove(dataset_path)
 
@@ -702,11 +705,8 @@ class GtfsScheduleSource(Source):
                 maximum_longitude,
             ) = extract_gtfs_bounding_box(file_path=dataset_path)
             extracted_on = get_iso_time()
-
-            #filesize_bytes = filesize(dataset_path)
-            filesize_bytes = os.stat(dataset_path).st_size
-            calendar_min, calendar_max = extract_gtfs_calendar(dataset_path)
-
+            extracted_filesize = os.stat(dataset_path).st_size
+            extracted_calendar_start, extracted_calendar_end = extract_gtfs_calendar(dataset_path)
 
             # Delete the downloaded dataset because we don't need it anymore
             os.remove(dataset_path)
@@ -737,10 +737,10 @@ class GtfsScheduleSource(Source):
                 maximum_latitude=maximum_latitude,
                 minimum_longitude=minimum_longitude,
                 maximum_longitude=maximum_longitude,
-                filesize_bytes=filesize_bytes,
-                calendar_min=calendar_min,
-                calendar_max=calendar_max,
                 extracted_on=extracted_on,
+                extracted_filesize=extracted_filesize,
+                extracted_calendar_start=extracted_calendar_start,
+                extracted_calendar_end=extracted_calendar_end,
                 latest=latest,
                 **kwargs,
             )
@@ -767,11 +767,11 @@ class GtfsScheduleSource(Source):
                     MINIMUM_LONGITUDE: kwargs.pop(MINIMUM_LONGITUDE),
                     MAXIMUM_LONGITUDE: kwargs.pop(MAXIMUM_LONGITUDE),
                     EXTRACTED_ON: kwargs.pop(EXTRACTED_ON),
+                    EXTRACTED_FILESIZE: kwargs.pop(EXTRACTED_FILESIZE),
+                    EXTRACTED_CALENDAR_START: kwargs.pop(EXTRACTED_CALENDAR_START),
+                    EXTRACTED_CALENDAR_END: kwargs.pop(EXTRACTED_CALENDAR_END),
                 },
             },
-            FILESIZE_BYTES: kwargs.pop(FILESIZE_BYTES),
-            CALENDAR_MIN: kwargs.pop(CALENDAR_MIN),
-            CALENDAR_MAX: kwargs.pop(CALENDAR_MAX),
             URLS: {
                 DIRECT_DOWNLOAD: kwargs.pop(DIRECT_DOWNLOAD),
                 AUTHENTICATION_TYPE: kwargs.pop(AUTHENTICATION_TYPE, None),

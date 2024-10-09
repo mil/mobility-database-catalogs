@@ -407,7 +407,25 @@ def extract_gtfs_bounding_box(file_path):
     return minimum_latitude, maximum_latitude, minimum_longitude, maximum_longitude
 
 def extract_gtfs_calendar(file_path):
+    """
+    Extracts the min and max dates of a GTFS source using the `calendar` & `calendar_dates` files from the GTFS dataset.
+
+    This function loads a GTFS dataset and determines the earliest (min) and latest (max) date referenced
+    based on the calendar and calendar_dates in the dataset.
+
+    Args:
+        file_path (str): The file path to the GTFS dataset.
+
+    Returns:
+        tuple: The minimum and maximum calendar date referenced in YYYY-MM-DD format.
+
+    Notes:
+        If both calendar and calendar_dates files ares missing, the returned value will be None.
+    """
     dataset = load_gtfs(file_path)
-    min_date = pd.concat([dataset.calendar.start_date, dataset.calendar_dates.date]).min()
-    max_date  = pd.concat([dataset.calendar.end_date, dataset.calendar_dates.date]).max()
+    min_date_yyyymmdd = pd.concat([dataset.calendar.start_date, dataset.calendar_dates.date]).min()
+    max_date_yyyymmdd  = pd.concat([dataset.calendar.end_date, dataset.calendar_dates.date]).max()
+    min_date = datetime.datetime.strptime(min_date_yyyymmdd, '%Y%m%d').strftime('%Y-%m-%d')
+    max_date = datetime.datetime.strptime(max_date_yyyymmdd, '%Y%m%d').strftime('%Y-%m-%d')
+
     return min_date, max_date

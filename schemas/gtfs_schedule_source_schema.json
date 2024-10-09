@@ -42,7 +42,7 @@
         },
         "bounding_box": {
           "type": "object",
-          "description": "This is the bounding box of the data source when it was first added to the catalog. It includes the date and timestamp the bounding box was extracted in UTC.",
+          "description": "This is the bounding box of the data source and metadata when it was first added to the catalog. It includes the date and timestamp the bounding box was extracted in UTC, filesize in bytes, and calendar daterange.",
           "oneOf": [
             {
               "properties": {
@@ -70,6 +70,15 @@
                   "type": "string",
                   "format": "date-time"
                 }
+                "extracted_filesize": {
+                  "type": "number"
+                },
+                "extracted_calendar_start": {
+                  "type": "date"
+                },
+                "extracted_calendar_end": {
+                  "type": "date"
+                },
               }
             },
             {
@@ -90,10 +99,19 @@
                   "type": "string",
                   "format": "date-time"
                 }
+                "extracted_filesize": {
+                  "type": "number"
+                },
+                "extracted_calendar_start": {
+                  "type": "number"
+                },
+                "extracted_calendar_end": {
+                  "type": "number"
+                },
               }
             }
           ],
-          "required": ["minimum_latitude", "maximum_latitude", "minimum_longitude", "maximum_longitude", "extracted_on"]
+          "required": ["minimum_latitude", "maximum_latitude", "minimum_longitude", "maximum_longitude", "extracted_on", "extracted_filesize", "extracted_calendar_start", "extracted_calendar_end"]
         }
       },
       "required": ["country_code", "bounding_box"]
@@ -105,10 +123,6 @@
         "type": "string",
         "enum": ["fares-v2","fares-v1","flex-v1","flex-v2","pathways"]
       }
-    },
-    "filesize_bytes": {
-      "type": "number",
-      "description": "Size (in bytes) of the data source when it was first added to the catalog."
     },
     "status": {
       "type": "string",
