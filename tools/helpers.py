@@ -9,6 +9,10 @@ from pandas.errors import ParserError
 from unidecode import unidecode
 import uuid
 from tools.constants import (
+    START_DATE,
+    END_DATE,
+    DATE,
+    GTFS_DATE_FORMAT,
     STOP_LAT,
     STOP_LON,
     MDB_ARCHIVES_LATEST_URL_TEMPLATE,
@@ -26,8 +30,8 @@ def to_json(path, obj):
     Saves a JSON object to the file with the given path.
 
     Args:
-        path (str): The path to the file where the JSON object will be saved.
-        obj (dict): The JSON compatible object to save.
+        path (The path to the file where the JSON object will be saved.
+        obj (The JSON compatible object to save.
 
     Returns:
         None
@@ -292,6 +296,21 @@ def create_filename(
         extension=extension,
     )
 
+def is_gtfs_yyyymmdd_format(string):
+    """
+    Determines if the given string is in standard YYYYMMDD format
+
+    Args:
+        string (str): Date string to test against.
+
+    Returns:
+        bool: True if can be parsed as a standard GTFS YYYYMMDD date string.
+    """
+    try:
+        datetime.datetime.strptime(string, GTFS_DATE_FORMAT)
+        return True
+    except ValueError:
+        return False
 
 def normalize(string):
     """
@@ -432,9 +451,22 @@ def extract_gtfs_calendar(file_path):
         If both calendar and calendar_dates files ares missing, the returned value will be None.
     """
     dataset = load_gtfs(file_path)
-    min_date_yyyymmdd = pd.concat([dataset.calendar.start_date, dataset.calendar_dates.date]).min()
-    max_date_yyyymmdd  = pd.concat([dataset.calendar.end_date, dataset.calendar_dates.date]).max()
-    min_date = datetime.datetime.strptime(min_date_yyyymmdd, '%Y%m%d').strftime('%Y-%m-%d')
-    max_date = datetime.datetime.strptime(max_date_yyyymmdd, '%Y%m%d').strftime('%Y-%m-%d')
+    dates = []
+
+    if dataset.calendar is not None:
+        dates.append(dataset.calendar[START_DATE])
+        dates.append(dataset.calendar[END_DATE])
+
+    if dataset.calendar_dates is not None:
+        dates.append(dataset.calendar_dates[DATE])
+
+    min_date, max_date = None, None
+    if len(dates) > 0:
+        all_dates = pd.concat(dates).dropna()
+        filtered_dates = all_dates[all_dates.apply(is_gtfs_yyyymmdd_format)]
+        min_date_yyyymmdd = filtered_dates.min()
+        max_date_yyyymmdd = filtered_dates.max()
+        min_date = datetime.datetime.strptime(min_date_yyyymmdd, GTFS_DATE_FORMAT).strftime('%Y-%m-%d')
+        max_date = datetime.datetime.strptime(max_date_yyyymmdd, GTFS_DATE_FORMAT).strftime('%Y-%m-%d')
 
     return min_date, max_date
