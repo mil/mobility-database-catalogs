@@ -8,6 +8,7 @@ from tools.helpers import (
     extract_gtfs_bounding_box,
     extract_gtfs_calendar,
     get_iso_time,
+    get_filesize,
     create_latest_url,
     to_json,
     create_filename,
@@ -705,7 +706,7 @@ class GtfsScheduleSource(Source):
                 maximum_longitude,
             ) = extract_gtfs_bounding_box(file_path=dataset_path)
             extracted_on = get_iso_time()
-            extracted_filesize = os.stat(dataset_path).st_size
+            extracted_filesize = get_filesize(dataset_path)
             extracted_calendar_start, extracted_calendar_end = extract_gtfs_calendar(dataset_path)
 
             # Delete the downloaded dataset because we don't need it anymore

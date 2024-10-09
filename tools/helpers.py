@@ -335,6 +335,15 @@ def get_iso_time():
         .isoformat()
     )
 
+def get_filesize(path):
+    """
+    Gets the filesize of the given file path.
+
+    Returns:
+        int: Filesize in bytes of the given file path.
+    """
+    return os.stat(path).st_size
+
 
 #########################
 # GTFS SPECIFIC FUNCTIONS
