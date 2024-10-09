@@ -150,6 +150,19 @@ To deactivate your virtual environment, enter the following command:
 
 If you are working with IntelliJ or PyCharm, it is possible to use this virtual environment within the IDE. To do so, follow the instructions to create a virtual environment [here](https://www.jetbrains.com/help/idea/creating-virtual-environment.html).
 
+#### Alpine Linux
+
+You should install python-dev for builds, GDAL, and RTree (Libspatialindex) as follows prior to setting up the venv. E.g. run:
+
+
+```sh
+$ apk add gdal-dev libspatialindex-dev python3-dev proj proj-dev proj-util
+$ python -m venv venv
+$ source venv/bin/activate
+$ pip install -r requirements.txt
+
+```
+
 ### Repository
 
 To use it, clone the project on your local machine using HTTP with the following commands:
