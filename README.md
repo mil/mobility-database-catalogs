@@ -65,6 +65,9 @@ Contains the JSON schemas used to validate the feeds in the integration tests.
 | --minimum_longitude    | Longitude | System generated                    | The minimum longitude for the feed's bounding box.  
 | --maximum_longitude    | Longitude | System generated                    | The maximum longitude for the feed's bounding box.  
 | --extracted_on   | Date and Time | System generated                    | The date and timestamp the bounding box was extracted on in UTC.  
+| --extracted_filesize | Integer | System generated                    | The filesize of the GTFS archive upon extraction.
+| --extracted_calendar_start | Date | System generated                    | The date earliest covered by calendar/calendar_dates upon extraction.
+| --extracted_calendar_end | Date | System generated                    | The date latest covered by calendar/calendar_dates upon extraction.
 | provider     | Text | Required                   | A commonly used name for the transit provider included in the feed.  |
 | feed_contact_email | Text | Optional | The contact information for the data producer of the feed, discovered via feed_info.feed_contact_email in the feed, the provider's website, or the Mobility Database contributor form. | 
 | name        |  Text |Optional              | An optional description of the feed, e.g to specify if the feed is an aggregate of multiple providers, or which network is represented by the feed. |
@@ -152,7 +155,7 @@ If you are working with IntelliJ or PyCharm, it is possible to use this virtual 
 
 #### Alpine Linux
 
-You should install python-dev for builds, GDAL, and RTree (Libspatialindex) as follows prior to setting up the venv. E.g. run:
+You should install python-dev, GDAL, RTree (Libspatialindex), and Proj as follows prior to setting up the venv. E.g. run:
 
 
 ```sh
