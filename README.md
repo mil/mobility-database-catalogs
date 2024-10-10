@@ -155,7 +155,7 @@ If you are working with IntelliJ or PyCharm, it is possible to use this virtual 
 
 #### Alpine Linux
 
-You should install python-dev, GDAL, RTree (Libspatialindex), and Proj as follows prior to setting up the venv. E.g. run:
+Follow the steps below to first install python-dev, GDAL, RTree (Libspatialindex), and Proj. Then setup a virtual environment, activate it, and install the project requirements (requirements.txt):
 
 
 ```sh
