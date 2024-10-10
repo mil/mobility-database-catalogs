@@ -377,6 +377,22 @@ class TestGtfsSpecificFunctions(TestCase):
         self.assertEqual(under_test, test_return_min_max)
 
     @patch("tools.helpers.load_gtfs")
+    def test_extract_gtfs_calendar_invalid_calendar(self, mock_load_gtfs):
+        test_return_min_max = (None, None)
+        test_calendar = pd.DataFrame(
+            {
+                # Note: only YYYYMMDD valid per GTFS spec; YYYY-MM-DD & nil values dropped
+                START_DATE: ["2024-02-30", pd.NA],
+                END_DATE: ["2034-02-01", pd.NA]
+            }
+        )
+        type(mock_load_gtfs.return_value).calendar = test_calendar
+        test_calendar_dates = None
+        type(mock_load_gtfs.return_value).calendar_dates = test_calendar_dates
+        under_test = extract_gtfs_calendar(file_path=self.test_path)
+        self.assertEqual(under_test, test_return_min_max)
+
+    @patch("tools.helpers.load_gtfs")
     def test_extract_gtfs_calendar_only_calendar(self, mock_load_gtfs):
         test_return_min_max = ('2010-01-02', '2032-04-09')
         test_calendar = pd.DataFrame(

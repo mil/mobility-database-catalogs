@@ -456,17 +456,18 @@ def extract_gtfs_calendar(file_path):
     if dataset.calendar is not None:
         dates.append(dataset.calendar[START_DATE])
         dates.append(dataset.calendar[END_DATE])
-
     if dataset.calendar_dates is not None:
         dates.append(dataset.calendar_dates[DATE])
+    if len(dates) == 0:
+        return None, None
 
-    min_date, max_date = None, None
-    if len(dates) > 0:
-        all_dates = pd.concat(dates).dropna()
-        filtered_dates = all_dates[all_dates.apply(is_gtfs_yyyymmdd_format)]
-        min_date_yyyymmdd = filtered_dates.min()
-        max_date_yyyymmdd = filtered_dates.max()
-        min_date = datetime.datetime.strptime(min_date_yyyymmdd, GTFS_DATE_FORMAT).strftime('%Y-%m-%d')
-        max_date = datetime.datetime.strptime(max_date_yyyymmdd, GTFS_DATE_FORMAT).strftime('%Y-%m-%d')
+    all_dates = pd.concat(dates).dropna()
+    filtered_dates = all_dates[all_dates.apply(is_gtfs_yyyymmdd_format)]
+    if len(filtered_dates) == 0:
+        return None, None
 
+    min_date_yyyymmdd = filtered_dates.min()
+    max_date_yyyymmdd = filtered_dates.max()
+    min_date = datetime.datetime.strptime(min_date_yyyymmdd, GTFS_DATE_FORMAT).strftime('%Y-%m-%d')
+    max_date = datetime.datetime.strptime(max_date_yyyymmdd, GTFS_DATE_FORMAT).strftime('%Y-%m-%d')
     return min_date, max_date
