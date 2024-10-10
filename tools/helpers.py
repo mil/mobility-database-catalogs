@@ -30,8 +30,8 @@ def to_json(path, obj):
     Saves a JSON object to the file with the given path.
 
     Args:
-        path (The path to the file where the JSON object will be saved.
-        obj (The JSON compatible object to save.
+        path (str): The path to the file where the JSON object will be saved.
+        obj (dict): The JSON compatible object to save.
 
     Returns:
         None
