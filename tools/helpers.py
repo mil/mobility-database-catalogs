@@ -298,7 +298,7 @@ def create_filename(
 
 def is_gtfs_yyyymmdd_format(string):
     """
-    Determines if the given string is in standard YYYYMMDD format
+    Determines if the given string is in standard GTFS YYYYMMDD date format.
 
     Args:
         string (str): Date string to test against.
@@ -434,7 +434,7 @@ def extract_gtfs_bounding_box(file_path):
 
     return minimum_latitude, maximum_latitude, minimum_longitude, maximum_longitude
 
-def extract_gtfs_calendar(file_path):
+def extract_gtfs_calendar_range(file_path):
     """
     Extracts the min and max dates of a GTFS source using the `calendar` & `calendar_dates` files from the GTFS dataset.
 
@@ -445,10 +445,10 @@ def extract_gtfs_calendar(file_path):
         file_path (str): The file path to the GTFS dataset.
 
     Returns:
-        tuple: The minimum and maximum calendar date referenced in YYYY-MM-DD format.
+        tuple: A tuple with the minimum and maximum calendar dates formatted in standard YYYY-MM-DD format.
 
     Notes:
-        If both calendar and calendar_dates files ares missing, the returned value will be None.
+        If both calendar and calendar_dates files are missing or columns are invalid, returned value will be a tuple with 2 None values.
     """
     dataset = load_gtfs(file_path)
     dates = []
