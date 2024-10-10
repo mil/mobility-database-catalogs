@@ -712,7 +712,6 @@ class GtfsScheduleSource(Source):
             # Delete the downloaded dataset because we don't need it anymore
             os.remove(dataset_path)
 
-
             subdivision_name = kwargs.get(SUBDIVISION_NAME)
             subdivision_name = (
                 subdivision_name if subdivision_name is not None else UNKNOWN
