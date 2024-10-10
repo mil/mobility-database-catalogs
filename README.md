@@ -245,7 +245,7 @@ To get the feeds by status, `$STATUS` is expressed as a string and one of:
 
 ```python
 >>> get_sources_by_status(
-        feature=$STATUS,
+        status=$STATUS,
     )
 ```
 ## Integration Tests
